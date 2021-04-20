@@ -1,32 +1,95 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <Header :class="{homepage: currentRoute}"/>
     <router-view />
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import Header from './components/Header.vue'
+
+import $ from 'jquery'
+
+export default {
+  components: { Header },
+  data() {
+    return {
+      currentRoute: null
+    }
+  },
+  mounted() {
+    $(document).ready(() => {
+      $(window).on('scroll', () => {
+        let wHeight = $(window).height();
+        console.log($(document).scrollTop())
+        if($(document).scrollTop() > wHeight) {
+
+          $('#header-wrapper').css('height', 50);
+          $('#header-wrapper').css('padding', '0 6%');
+          $('#header-wrapper').css('justify-content', 'space-between');
+
+          $('#nav').removeClass('nav-show');
+          
+          $('#nav').css('display', 'none');
+          $('#nav').css('right', '-50%');
+          
+          $('#nav-small').addClass('show');
+          $('#features').css('z-index', '0')
+
+        } else if ($(document).scrollTop() < 10) {
+
+          $('#header-wrapper').css('height', 110);
+          $('#header-wrapper').css('padding', '0 8%');
+          $('#header-wrapper').css('justify-content', 'center');
+          
+          $('#nav').css('display', 'flex');
+          setTimeout(() => {
+            $('#nav').css('right', '8%');
+          }, 100);
+          $('#nav-small').removeClass('show');
+
+          $('#features').css('z-index', '2')
+
+        } else if (($(document).scrollTop() <= wHeight) && $('#header-wrapper').hasClass('scrolling')) {
+
+          $('#hav').addClass('bg-brown');
+        }
+      })
+    })
+  },
+  updated() {
+    this.currentRoute = this.$router.currentRoute.name == "Home"
+  },
+  created() {
+    this.currentRoute = this.$router.currentRoute.name == "Home" ? true : false
+  }
 }
 
-#nav {
-  padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+</script>
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<style lang="scss">
+@import 'assets/styles/colors';
+
+* {
+  color: $black;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+  .homepage {
+    position: fixed !important;
+    left: 0;
+    right: 0;
   }
+
+.image_ {
+  background: #b5b5b5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  height: 100%;
 }
 </style>
